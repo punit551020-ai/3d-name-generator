@@ -1,0 +1,1102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080916">
+  <title>हैकर्स अंकित — Name Studio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080916;
+      --text: #f5f4ff;
+      --pink: #ff4dc4;
+      --line: rgba(190, 177, 255, .13);
+      font-family: "Inter", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 32px;
+    }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      overflow-x: hidden;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    button, input { font: inherit; }
+
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .ambient {
+      position: fixed;
+      z-index: -1;
+      width: 42vw;
+      height: 42vw;
+      border-radius: 50%;
+      filter: blur(125px);
+      opacity: .12;
+      pointer-events: none;
+    }
+
+    .ambient-one {
+      top: 2%;
+      left: -18%;
+      background: #773cff;
+    }
+
+    .ambient-two {
+      top: 30%;
+      right: -24%;
+      background: #ec35c4;
+    }
+
+    .site-header {
+      width: min(1180px, calc(100% - 48px));
+      height: 78px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(190, 177, 255, .08);
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 31px;
+      height: 31px;
+      place-items: center;
+      border: 1px solid rgba(173, 132, 255, .65);
+      border-radius: 10px;
+      color: #d6b9ff;
+      font-size: 16px;
+      letter-spacing: 0;
+      box-shadow: 0 0 18px rgba(161, 107, 255, .25);
+    }
+
+    .brand-mark span { color: var(--pink); font-size: 10px; }
+    .brand-accent { color: #b68aff; }
+
+    .header-link {
+      color: #c0bed4;
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .header-link span { padding-left: 4px; color: var(--pink); }
+
+    .hero {
+      width: min(900px, calc(100% - 40px));
+      min-height: 610px;
+      margin: 0 auto;
+      padding: 70px 0 54px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-kicker, .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: #b6adc9;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .22em;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #81ffd0;
+      box-shadow: 0 0 12px #81ffd0;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    .hero-title {
+      position: relative;
+      margin: 32px 0 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      perspective: 700px;
+      transform-style: preserve-3d;
+      animation: title-float 5s ease-in-out infinite;
+    }
+
+    .title-halo {
+      position: absolute;
+      z-index: -1;
+      width: 110%;
+      height: 50%;
+      top: 25%;
+      border-radius: 50%;
+      background: linear-gradient(90deg, transparent, rgba(166, 69, 255, .42), rgba(255, 65, 199, .28), transparent);
+      filter: blur(38px);
+      animation: halo-breathe 4s ease-in-out infinite;
+    }
+
+    .title-devanagari {
+      position: relative;
+      color: #fff;
+      font-family: "Baloo 2", sans-serif;
+      font-size: clamp(58px, 11vw, 120px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: .025em;
+      text-shadow:
+        0 1px 0 #f5d9ff,
+        0 3px 0 #d69eff,
+        0 7px 0 #8e45d7,
+        0 12px 22px rgba(174, 71, 255, .68),
+        0 0 38px rgba(231, 70, 255, .76),
+        0 0 90px rgba(111, 62, 255, .56);
+      animation: title-glow 3s ease-in-out infinite alternate;
+    }
+
+    .hero-title-caption {
+      margin-top: 14px;
+      color: #d0b8ff;
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(11px, 2vw, 17px);
+      font-weight: 700;
+      letter-spacing: .6em;
+      text-indent: .6em;
+      text-shadow: 0 0 20px rgba(185, 110, 255, .8);
+    }
+
+    .hero-copy {
+      margin: 23px 0 27px;
+      color: #b7b4ca;
+      font-size: 15px;
+    }
+
+    .search-form {
+      width: min(600px, 100%);
+      min-height: 62px;
+      padding: 7px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(191, 157, 255, .32);
+      border-radius: 16px;
+      background: rgba(20, 20, 42, .84);
+      box-shadow: 0 0 0 5px rgba(151, 89, 255, .04), 0 15px 55px rgba(0, 0, 0, .24);
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+    .search-form:focus-within {
+      border-color: rgba(201, 139, 255, .8);
+      box-shadow: 0 0 0 5px rgba(151, 89, 255, .09), 0 0 35px rgba(151, 89, 255, .14);
+    }
+
+    .search-icon {
+      padding-left: 13px;
+      color: #c8a5ff;
+      font-size: 28px;
+      line-height: 1;
+      transform: rotate(-20deg);
+    }
+
+    .search-form input {
+      width: 100%;
+      min-width: 0;
+      color: white;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 14px;
+    }
+
+    .search-form input::placeholder { color: #88869f; }
+
+    .create-button {
+      flex: 0 0 auto;
+      padding: 13px 20px;
+      border: 0;
+      border-radius: 11px;
+      color: #fff;
+      background: linear-gradient(110deg, #955bff, #e34bbd);
+      box-shadow: 0 5px 22px rgba(180, 75, 235, .3);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s ease, filter .2s ease;
+    }
+
+    .create-button:hover { transform: translateY(-2px); filter: brightness(1.12); }
+    .create-button span { padding-left: 5px; }
+
+    .search-hint {
+      margin: 11px 0 26px;
+      color: #79788f;
+      font-size: 11px;
+    }
+
+    .popular {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .popular-label {
+      color: #77758e;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .18em;
+    }
+
+    .popular-chips {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .name-chip {
+      padding: 7px 12px;
+      border: 1px solid rgba(190, 177, 255, .15);
+      border-radius: 999px;
+      color: #c3bfd5;
+      background: rgba(255, 255, 255, .035);
+      font-size: 10px;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .name-chip:hover, .name-chip.active {
+      border-color: rgba(202, 142, 255, .56);
+      color: #f1dbff;
+      background: rgba(165, 96, 255, .13);
+    }
+
+    .gallery-section {
+      width: min(1180px, calc(100% - 48px));
+      margin: 0 auto;
+      padding: 37px 0 100px;
+      border-top: 1px solid rgba(190, 177, 255, .1);
+    }
+
+    .section-heading {
+      margin-bottom: 24px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .eyebrow {
+      margin: 0 0 11px;
+      color: #a7a0bd;
+      font-size: 9px;
+    }
+
+    .eyebrow-line { width: 18px; height: 1px; background: var(--pink); }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(23px, 4vw, 34px);
+      font-weight: 700;
+      letter-spacing: -.055em;
+    }
+
+    .section-heading h2 span { color: var(--pink); }
+
+    .style-count {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #a7a3b9;
+      font-size: 9px;
+      letter-spacing: .12em;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .name-card {
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(190, 177, 255, .13);
+      border-radius: 15px;
+      background: linear-gradient(145deg, rgba(23, 23, 48, .93), rgba(12, 13, 29, .95));
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .15);
+      animation: card-in .45s both;
+      animation-delay: var(--delay, 0ms);
+      transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    }
+
+    .name-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(183, 126, 255, .42);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, .28), 0 0 25px rgba(158, 81, 255, .09);
+    }
+
+    .card-art {
+      position: relative;
+      min-height: 184px;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      isolation: isolate;
+      background:
+        radial-gradient(ellipse at 50% 44%, color-mix(in srgb, var(--accent) 27%, transparent), transparent 64%),
+        linear-gradient(145deg, color-mix(in srgb, var(--accent) 12%, #15142a), #0e1020 76%);
+      perspective: 700px;
+    }
+
+    .card-art::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0;
+      opacity: .23;
+      background-image: radial-gradient(rgba(255, 255, 255, .55) .7px, transparent .7px);
+      background-size: 14px 14px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .card-art::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 85%;
+      height: 1px;
+      bottom: 29%;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      box-shadow: 0 0 20px var(--accent);
+      opacity: .8;
+    }
+
+    .card-index {
+      position: absolute;
+      top: 12px;
+      left: 13px;
+      color: rgba(255, 255, 255, .42);
+      font-family: "Orbitron", sans-serif;
+      font-size: 8px;
+      letter-spacing: .12em;
+    }
+
+    .style-label {
+      position: absolute;
+      right: 12px;
+      bottom: 12px;
+      color: rgba(255, 255, 255, .5);
+      font-size: 8px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .letter-model {
+      position: relative;
+      max-width: 92%;
+      overflow: hidden;
+      color: var(--accent);
+      font-family: var(--font, "Orbitron"), sans-serif;
+      font-size: var(--size, clamp(24px, 4vw, 37px));
+      font-weight: 900;
+      letter-spacing: var(--spacing, .045em);
+      line-height: 1.2;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transform-style: preserve-3d;
+      animation: model-turn var(--turn, 7s) ease-in-out infinite;
+      filter: drop-shadow(0 0 10px color-mix(in srgb, var(--accent) 82%, transparent))
+              drop-shadow(0 7px 0 color-mix(in srgb, var(--accent) 44%, #15142a));
+    }
+
+    .style-neon .letter-model {
+      color: #fff;
+      text-shadow: 0 0 7px var(--accent), 0 0 20px var(--accent), 0 0 42px var(--accent);
+      filter: none;
+    }
+
+    .style-chrome .letter-model {
+      color: transparent;
+      background: linear-gradient(180deg, #fff 4%, #b3c1dc 23%, #fff 38%, #727b99 48%, #fff 65%, #9fa9c8 80%, #fff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      filter: drop-shadow(0 7px 0 #4f5874) drop-shadow(0 14px 12px rgba(0, 0, 0, .6));
+    }
+
+    .style-outline .letter-model {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--accent);
+      filter: drop-shadow(0 0 9px var(--accent));
+    }
+
+    .style-gradient .letter-model {
+      color: transparent;
+      background: linear-gradient(110deg, #fff, var(--accent), #7ff6ff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      filter: drop-shadow(0 7px 0 color-mix(in srgb, var(--accent) 55%, #15142a));
+    }
+
+    .style-italic .letter-model { font-style: italic; transform: rotateX(13deg) rotateY(-13deg); }
+    .style-block .letter-model { letter-spacing: -.035em; transform: rotateX(16deg) rotateY(9deg); }
+
+    .style-glow .letter-model {
+      text-shadow: 0 0 5px var(--accent), 0 0 18px var(--accent), 0 0 36px var(--accent);
+    }
+
+    .style-retro .letter-model {
+      color: #ffe7ae;
+      text-shadow: 0 3px #ed5c7f, 0 6px #a04ac1, 0 9px #524bd2, 0 0 24px var(--accent);
+    }
+
+    .style-crystal .letter-model {
+      color: #d9fbff;
+      text-shadow: 3px 3px 0 var(--accent), -2px -2px 0 rgba(255,255,255,.5), 0 0 24px var(--accent);
+    }
+
+    .style-mono .letter-model { font-family: monospace; letter-spacing: -.07em; }
+    .style-script .letter-model { font-family: "Baloo 2", sans-serif; letter-spacing: .01em; }
+
+    .style-3d .letter-model {
+      text-shadow:
+        1px 1px 0 color-mix(in srgb, var(--accent) 82%, black),
+        2px 2px 0 color-mix(in srgb, var(--accent) 74%, black),
+        3px 3px 0 color-mix(in srgb, var(--accent) 60%, black),
+        4px 4px 0 color-mix(in srgb, var(--accent) 45%, black),
+        0 0 24px color-mix(in srgb, var(--accent) 80%, transparent);
+    }
+
+    .card-meta {
+      padding: 12px 12px 13px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-name {
+      min-width: 0;
+      overflow: hidden;
+      color: #e7e4f3;
+      font-size: 11px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .download-button {
+      flex: 0 0 auto;
+      padding: 8px 9px;
+      border: 1px solid rgba(189, 161, 255, .2);
+      border-radius: 8px;
+      color: #d8c5ff;
+      background: rgba(157, 100, 255, .08);
+      font-size: 9px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .2s ease;
+    }
+
+    .download-button:hover {
+      border-color: rgba(213, 170, 255, .56);
+      color: white;
+      background: rgba(157, 100, 255, .2);
+    }
+
+    .download-button:disabled { opacity: .65; cursor: wait; }
+
+    .site-footer {
+      min-height: 70px;
+      padding: 18px max(24px, calc((100% - 1180px) / 2));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-top: 1px solid rgba(190, 177, 255, .09);
+      color: #77758e;
+      font-size: 10px;
+    }
+
+    .footer-brand { color: #bbb4d0; font-weight: 800; letter-spacing: .12em; }
+    .footer-brand span { color: var(--pink); }
+
+    .site-footer a {
+      color: #aaa3be;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-decoration: none;
+    }
+
+    .toast {
+      position: fixed;
+      z-index: 5;
+      right: 22px;
+      bottom: 22px;
+      max-width: calc(100% - 44px);
+      padding: 12px 16px;
+      border: 1px solid rgba(200, 155, 255, .3);
+      border-radius: 10px;
+      color: white;
+      background: rgba(24, 19, 42, .96);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, .3);
+      font-size: 12px;
+      opacity: 0;
+      transform: translateY(9px);
+      pointer-events: none;
+      transition: .25s ease;
+    }
+
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @keyframes pulse { 50% { opacity: .45; transform: scale(.75); } }
+
+    @keyframes title-float {
+      0%, 100% { transform: rotateX(2deg) rotateY(-2deg) translateY(0); }
+      50% { transform: rotateX(-2deg) rotateY(2deg) translateY(-8px); }
+    }
+
+    @keyframes halo-breathe { 50% { opacity: .58; transform: scale(1.08); } }
+    @keyframes title-glow { from { filter: brightness(.95); } to { filter: brightness(1.18); } }
+
+    @keyframes model-turn {
+      0%, 100% { transform: rotateX(9deg) rotateY(-13deg) translateY(0); }
+      50% { transform: rotateX(-8deg) rotateY(13deg) translateY(-5px); }
+    }
+
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .hero { min-height: 580px; }
+    }
+
+    @media (max-width: 620px) {
+      .site-header { width: calc(100% - 32px); height: 64px; }
+      .hero { width: calc(100% - 32px); min-height: auto; padding: 62px 0 52px; }
+      .hero-kicker { font-size: 8px; letter-spacing: .16em; }
+      .hero-title { margin-top: 34px; }
+      .title-devanagari { font-size: clamp(48px, 13vw, 76px); }
+      .hero-title-caption { letter-spacing: .42em; text-indent: .42em; }
+      .hero-copy { font-size: 13px; }
+      .search-form { min-height: 57px; border-radius: 13px; }
+      .create-button { padding: 12px 14px; }
+      .gallery-section { width: calc(100% - 32px); padding-top: 29px; }
+      .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+      .card-art { min-height: 150px; }
+      .card-meta { padding: 10px; }
+      .download-button { padding: 7px; font-size: 8px; }
+      .style-count { font-size: 8px; }
+      .site-footer { padding: 17px 16px; }
+    }
+
+    @media (max-width: 380px) {
+      .card-grid { gap: 8px; }
+      .card-art { min-height: 130px; }
+      .card-name { font-size: 10px; }
+      .download-button { padding: 7px 6px; font-size: 7px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="Hacker Ankit home">
+      <span class="brand-mark">H<span>✳</span></span>
+      <span>NAME<span class="brand-accent">VERSE</span></span>
+    </a>
+    <a class="header-link" href="#gallery">Explore styles <span aria-hidden="true">↗</span></a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-kicker"><span class="live-dot"></span> YOUR NAME, REIMAGINED IN 3D</div>
+
+      <h1 class="hero-title" lang="hi">
+        <span class="title-halo" aria-hidden="true"></span>
+        <span class="title-devanagari">हैकर्स अंकित</span>
+        <span class="hero-title-caption">HACKER ANKIT</span>
+      </h1>
+
+      <p class="hero-copy">Turn any name into a little piece of art.</p>
+
+      <form class="search-form" id="search-form">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <label class="sr-only" for="name-input">Enter any name</label>
+        <input id="name-input" name="name" type="text" maxlength="24"
+          placeholder="Type any name…" autocomplete="off" spellcheck="false">
+        <button class="create-button" type="submit">Create <span aria-hidden="true">✦</span></button>
+      </form>
+
+      <p class="search-hint">Any name. Any style. Made just for you.</p>
+
+      <div class="popular">
+        <span class="popular-label">TRY A NAME</span>
+        <div class="popular-chips" id="popular-chips"></div>
+      </div>
+    </section>
+
+    <section class="gallery-section" id="gallery">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow"><span class="eyebrow-line"></span> THE COLLECTION</p>
+          <h2 id="gallery-title">Made to stand out<span>.</span></h2>
+        </div>
+        <span class="style-count">12 UNIQUE STYLES</span>
+      </div>
+      <div class="card-grid" id="card-grid" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span class="footer-brand">NAMEVERSE <span>✳</span></span>
+    <span>Make a name for yourself.</span>
+    <a href="#top" id="back-to-top">BACK TO TOP ↑</a>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js"></script>
+  <script>
+    "use strict";
+
+    const popularNames = [
+      "Ankit", "Rahul", "Priya", "Amit", "Aarav", "Diya", "Ishaan",
+      "Maya", "Riya", "Kabir", "Zara", "Arjun", "Neha", "Vihaan",
+      "Sana", "Dev", "Aanya", "Reyansh", "Meera", "Aditya", "Ira",
+      "Rohan", "Kiara", "Nikhil", "Tara", "Yash"
+    ];
+
+    const styles = [
+      { name: "Neon Pulse", className: "neon", color: "#ff4dc4" },
+      { name: "Liquid Chrome", className: "chrome", color: "#9be8ff" },
+      { name: "Electric Outline", className: "outline", color: "#8a72ff" },
+      { name: "Prism Gradient", className: "gradient", color: "#53e3ff" },
+      { name: "Cyber Italic", className: "italic", color: "#ff754e" },
+      { name: "Block 3D", className: "block", color: "#ffd166" },
+      { name: "Dream Glow", className: "glow", color: "#df6cff" },
+      { name: "Retro Wave", className: "retro", color: "#ff8a80" },
+      { name: "Crystal Cut", className: "crystal", color: "#74f4e4" },
+      { name: "Mono Future", className: "mono", color: "#c6a2ff" },
+      { name: "Soft Sculpt", className: "script", color: "#ff79bc" },
+      { name: "Deep Dimension", className: "3d", color: "#9c82ff" }
+    ];
+
+    const grid = document.getElementById("card-grid");
+    const input = document.getElementById("name-input");
+    const form = document.getElementById("search-form");
+    const title = document.getElementById("gallery-title");
+    const chips = document.getElementById("popular-chips");
+    const toast = document.getElementById("toast");
+    let toastTimer;
+
+    function makeChips() {
+      popularNames.forEach(name => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "name-chip";
+        chip.textContent = name;
+
+        chip.addEventListener("click", () => {
+          input.value = name;
+          generateCards(name);
+          document.querySelectorAll(".name-chip").forEach(item => item.classList.remove("active"));
+          chip.classList.add("active");
+          document.getElementById("gallery").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+
+        chips.appendChild(chip);
+      });
+    }
+
+    function safeName(value) {
+      return value.trim().replace(/\s+/g, " ").slice(0, 24);
+    }
+
+    function generateCards(rawName) {
+      const name = safeName(rawName);
+
+      if (!name) {
+        input.focus();
+        showToast("Type a name to create your designs.");
+        return;
+      }
+
+      title.textContent = "";
+      const titleText = document.createTextNode(`Styles for ${name}`);
+      const dot = document.createElement("span");
+      dot.textContent = ".";
+      title.append(titleText, dot);
+
+      grid.replaceChildren();
+
+      styles.forEach((style, index) => {
+        const card = document.createElement("article");
+        card.className = `name-card style-${style.className}`;
+        card.style.setProperty("--delay", `${index * 35}ms`);
+
+        const art = document.createElement("div");
+        art.className = "card-art";
+        art.style.setProperty("--accent", style.color);
+
+        const number = document.createElement("span");
+        number.className = "card-index";
+        number.textContent = `STYLE ${String(index + 1).padStart(2, "0")}`;
+
+        const model = document.createElement("span");
+        model.className = "letter-model";
+        model.textContent = name;
+        model.title = name;
+
+        const label = document.createElement("span");
+        label.className = "style-label";
+        label.textContent = style.name;
+
+        art.append(number, model, label);
+
+        const meta = document.createElement("div");
+        meta.className = "card-meta";
+
+        const cardName = document.createElement("span");
+        cardName.className = "card-name";
+        cardName.textContent = `${name} · ${style.name}`;
+
+        const download = document.createElement("button");
+        download.type = "button";
+        download.className = "download-button";
+        download.textContent = "↓ Download";
+        download.setAttribute("aria-label", `Download ${name} ${style.name} wallpaper`);
+        download.addEventListener("click", () => downloadWallpaper(name, style, download));
+
+        meta.append(cardName, download);
+        card.append(art, meta);
+        grid.appendChild(card);
+      });
+    }
+
+    function downloadWallpaper(name, style, button) {
+      button.disabled = true;
+      button.textContent = "Preparing…";
+
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1920;
+        canvas.height = 1080;
+        const ctx = canvas.getContext("2d");
+
+        const background = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        background.addColorStop(0, "#101027");
+        background.addColorStop(.55, "#17112c");
+        background.addColorStop(1, "#090c1c");
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const glow = ctx.createRadialGradient(960, 500, 20, 960, 500, 680);
+        glow.addColorStop(0, hexToRgba(style.color, .36));
+        glow.addColorStop(1, "rgba(9, 12, 28, 0)");
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        let seed = hashString(name + style.name);
+        const random = () => {
+          seed = (seed * 16807) % 2147483647;
+          return (seed - 1) / 2147483646;
+        };
+
+        ctx.save();
+        ctx.globalAlpha = .26;
+        ctx.fillStyle = "#ffffff";
+        for (let i = 0; i < 180; i++) {
+          const x = random() * canvas.width;
+          const y = random() * canvas.height;
+          const radius = random() * 2.2 + .5;
+          ctx.beginPath();
+          ctx.arc(x, y, radius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+
+        ctx.save();
+        ctx.globalAlpha = .12;
+        ctx.strokeStyle = style.color;
+        ctx.lineWidth = 1;
+        for (let x = 0; x < canvas.width; x += 72) {
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+          ctx.stroke();
+        }
+        for (let y = 0; y < canvas.height; y += 72) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+          ctx.stroke();
+        }
+        ctx.restore();
+
+        ctx.strokeStyle = hexToRgba(style.color, .5);
+        ctx.lineWidth = 2;
+        ctx.strokeRect(54, 54, canvas.width - 108, canvas.height - 108);
+        ctx.strokeStyle = hexToRgba(style.color, .18);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(68, 68, canvas.width - 136, canvas.height - 136);
+
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.font = "700 24px Inter, Arial, sans-serif";
+        ctx.fillStyle = "rgba(235, 225, 255, .75)";
+        ctx.letterSpacing = "8px";
+        ctx.fillText("NAMEVERSE  ✳  3D NAME STUDIO", 960, 230);
+
+        const fontSize = Math.min(230, Math.floor(1320 / Math.max(name.length, 4)));
+        ctx.font = `900 ${fontSize}px Orbitron, Inter, Arial, sans-serif`;
+        ctx.letterSpacing = name.length > 8 ? "1px" : "5px";
+        ctx.shadowColor = style.color;
+        ctx.shadowBlur = 48;
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = hexToRgba(style.color, .8);
+        ctx.strokeText(name, 960, 530, 1450);
+
+        const textGradient = ctx.createLinearGradient(420, 430, 1500, 630);
+        textGradient.addColorStop(0, "#ffffff");
+        textGradient.addColorStop(.5, style.color);
+        textGradient.addColorStop(1, "#b8eaff");
+        ctx.fillStyle = textGradient;
+        ctx.shadowBlur = 24;
+        ctx.fillText(name, 960, 530, 1450);
+
+        ctx.shadowBlur = 0;
+        ctx.font = "500 26px Inter, Arial, sans-serif";
+        ctx.letterSpacing = "3px";
+        ctx.fillStyle = "rgba(223, 219, 241, .72)";
+        ctx.fillText(style.name.toUpperCase(), 960, 760);
+
+        ctx.font = "600 17px Inter, Arial, sans-serif";
+        ctx.letterSpacing = "2px";
+        ctx.fillStyle = "rgba(184, 174, 208, .56)";
+        ctx.fillText("MADE JUST FOR YOU", 960, 820);
+
+        const link = document.createElement("a");
+        link.download = `${slugify(name)}-${slugify(style.name)}-wallpaper.png`;
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+        showToast("Your 1920 × 1080 wallpaper is ready.");
+      } catch (error) {
+        console.error("Wallpaper export failed:", error);
+        showToast("Could not create the wallpaper. Please try again.");
+      } finally {
+        button.disabled = false;
+        button.textContent = "↓ Download";
+      }
+    }
+
+    function hexToRgba(hex, alpha) {
+      const value = hex.replace("#", "");
+      const number = parseInt(value, 16);
+      const r = (number >> 16) & 255;
+      const g = (number >> 8) & 255;
+      const b = number & 255;
+      return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function hashString(value) {
+      let hash = 1;
+      for (let i = 0; i < value.length; i++) {
+        hash = (hash * 31 + value.charCodeAt(i)) % 2147483647;
+      }
+      return hash || 1;
+    }
+
+    function slugify(value) {
+      return value.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "name";
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2800);
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      generateCards(input.value);
+
+      document.querySelectorAll(".name-chip").forEach(chip => {
+        chip.classList.toggle(
+          "active",
+          chip.textContent.toLowerCase() === safeName(input.value).toLowerCase()
+        );
+      });
+
+      document.getElementById("gallery").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+
+    let typingTimer;
+    input.addEventListener("input", () => {
+      clearTimeout(typingTimer);
+      typingTimer = setTimeout(() => {
+        if (safeName(input.value)) generateCards(input.value);
+      }, 180);
+    });
+
+    document.getElementById("back-to-top").addEventListener("click", event => {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    function startParticleField() {
+      const canvas = document.getElementById("particle-canvas");
+
+      if (!window.THREE) {
+        canvas.style.background =
+          "radial-gradient(ellipse at 50% 15%, rgba(108, 62, 180, .12), transparent 60%)";
+        return;
+      }
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(
+        65,
+        window.innerWidth / window.innerHeight,
+        .1,
+        1000
+      );
+      camera.position.z = 82;
+
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const count = Math.min(1900, Math.floor(window.innerWidth * window.innerHeight / 650));
+      const positions = new Float32Array(count * 3);
+      const colors = new Float32Array(count * 3);
+
+      const colorA = new THREE.Color("#a56aff");
+      const colorB = new THREE.Color("#ff56c8");
+      const colorC = new THREE.Color("#56ddff");
+
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        positions[i3] = (Math.random() - .5) * 180;
+        positions[i3 + 1] = (Math.random() - .5) * 110;
+        positions[i3 + 2] = (Math.random() - .5) * 100;
+
+        const pick = Math.random();
+        const color = pick < .58 ? colorA : (pick < .79 ? colorB : colorC);
+        colors[i3] = color.r;
+        colors[i3 + 1] = color.g;
+        colors[i3 + 2] = color.b;
+      }
+
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+
+      const material = new THREE.PointsMaterial({
+        size: 1.15,
+        transparent: true,
+        opacity: .75,
+        vertexColors: true,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false
+      });
+
+      const particles = new THREE.Points(geometry, material);
+      scene.add(particles);
+
+      let pointerX = 0;
+      let pointerY = 0;
+
+      window.addEventListener("pointermove", event => {
+        pointerX = (event.clientX / window.innerWidth - .5) * 2;
+        pointerY = (event.clientY / window.innerHeight - .5) * 2;
+      }, { passive: true });
+
+      function resize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.7));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      window.addEventListener("resize", resize, { passive: true });
+
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const elapsed = clock.getElapsedTime();
+        particles.rotation.y = elapsed * .025 + pointerX * .035;
+        particles.rotation.x = Math.sin(elapsed * .12) * .04 + pointerY * .025;
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    }
+
+    makeChips();
+    generateCards("Ankit");
+    startParticleField();
+  </script>
+</body>
+</html>
